@@ -1,30 +1,28 @@
+import pymysql
 from flask import Flask, render_template, request, redirect, session, flash, url_for
+
+from daos.dao import JogoDao, UsuarioDao
+from models.jogoModel import Jogo
+from models.usuarioModel import Usuario
 
 app = Flask(__name__)
 app.secret_key = 'Israel'
 
-class Jogo:
-    def __init__(self, nome, categoria, console):
-        self.nome = nome
-        self.categoria = categoria
-        self.console = console
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWD'] = '.,Avaiana41'
+app.config['MYSQL_HOST'] = '127.0.0.1'
+app.config['MYSQL_PORT'] = 3306
 
-class Usuario:
-    def __init__(self, id, usuario, senha):
-        self.id = id
-        self.usuario = usuario
-        self.senha = senha
+db = pymysql.connect(user='root',
+                     passwd='.,Avaiana41',
+                     host='127.0.0.1',
+                     db='jogoteca',
+                     port=3306)
 
-    def __str__(self):
-        return f'Usuário: {self.usuario}\nSenha: {self.senha}'
+jogoDao = JogoDao(db)
+usuarioDao = UsuarioDao(db)
 
-listJogos = [Jogo('Dark Souls', 'Ação', 'PC'),
-             Jogo('Final Fantasy', 'RPG', 'Playstation 2'),
-             Jogo('Castlevania', 'Plataforma', 'Xbox 360')]
-
-dictUsuarios = {'Israel': Usuario(1, 'Israel', 123),
-                'Joice': Usuario(2, 'Joice', 321),
-                'Rafaella': Usuario(3, 'Rafaella', 456)}
+listJogos = jogoDao.listar()
 
 @app.route('/')
 def lista():
@@ -45,7 +43,10 @@ def adicionaJogo():
     nome = request.form['nome']
     categoria = request.form['categoria']
     console = request.form['console']
-    listJogos.append(Jogo(nome, categoria, console))
+    jogoNovo = Jogo(nome, categoria, console)
+    listJogos.append(jogoNovo)
+
+    jogoDao.salvar(jogoNovo)
 
     return redirect(url_for('lista'))
 
@@ -56,9 +57,11 @@ def login():
 
 @app.route('/autenticar', methods=['POST'])
 def auth():
-    if request.form['usuario'] in dictUsuarios:
+    usuario = usuarioDao.buscar_por_id(request.form['usuario'])
+
+    if usuario:
         userLog = Usuario(request.form['usuario'], request.form['usuario'], request.form['senha'])
-        if userLog.senha == str(dictUsuarios[userLog.usuario].senha):
+        if userLog.senha == str(usuario.senha):
             session['usuario_logado'] = userLog.usuario
             flash(userLog.usuario + ' logou com sucesso!')
             proximaPagina = request.form['proxima']
