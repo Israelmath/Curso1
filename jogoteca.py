@@ -29,7 +29,7 @@ def lista():
     if 'usuario_logado' not in session or session['usuario_logado'] is None:
         print(f"lista: {url_for('login')}")
         return redirect(url_for('login'))
-    return render_template('lista.html', titulo='Jogos do Israel', jogos=listJogos)
+    return render_template('home.html', titulo='Jogos do Israel', jogos=listJogos)
 
 @app.route('/novo')
 def novaTela():
@@ -38,17 +38,28 @@ def novaTela():
         return redirect(url_for('login', proxima=url_for('novaTela')))
     return render_template('novo.html', titulo='Novo jogo')
 
+@app.route('/editar/<int:id>')
+def editar(id):
+    if 'usuario_logado' not in session or session['usuario_logado'] is None:
+        return redirect(url_for('login', proxima=url_for('editar')))
+    jogo = jogoDao.busca_por_id(id)
+    return render_template('editar.html', titulo='Editar jogo', jogo=jogo)
+
 @app.route('/criar', methods=['POST'])
 def adicionaJogo():
     nome = request.form['nome']
     categoria = request.form['categoria']
     console = request.form['console']
     jogoNovo = Jogo(nome, categoria, console)
-    listJogos.append(jogoNovo)
+    # listJogos.append(jogoNovo)
 
     jogoDao.salvar(jogoNovo)
 
     return redirect(url_for('lista'))
+
+@app.route('/atualizar/', methods=['POST'])
+def atualizar():
+    pass
 
 @app.route('/login')
 def login():
