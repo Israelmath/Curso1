@@ -102,4 +102,10 @@ def logout():
     flash('Nenhum usuário logado!')
     return redirect(url_for('login'))
 
+@app.route('/excluir/<int:id>')
+def excluir(id):
+    jogoDao.deletar(id)
+
+    return redirect(url_for('home'))
+
 app.run('127.0.0.1', debug=True, port=2032)

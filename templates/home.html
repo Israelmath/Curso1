@@ -1,6 +1,7 @@
 {% extends "template.html" %}
 {% block conteudo %}
         <table class="table table-striped table-responsive table-bordered">
+            <a class="btn btn-primary" href="{{ url_for('novaTela') }}" >Novo jogo</a>
             <thead class="thead-default">
                 <tr>
                     <th>Nome</th>
@@ -15,7 +16,10 @@
                     <td>{{ jogo.nome }}</td>
                     <td>{{ jogo.categoria }}</td>
                     <td>{{ jogo.console }}</td>
-                    <td><a href=" {{ url_for('editar', id=jogo.id) }}">Editar</a> </td>
+                    <td>
+                        <a href=" {{ url_for('editar', id=jogo.id) }}">Editar</a>
+                        <a href=" {{ url_for('excluir', id=jogo.id) }}">Excluir</a>
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>

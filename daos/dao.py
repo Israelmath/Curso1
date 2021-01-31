@@ -37,8 +37,8 @@ class JogoDao:
         return Jogo(tupla[1], tupla[2], tupla[3], id=tupla[0])
 
     def deletar(self, id):
-        self.__db.connection.cursor().execute(SQL_DELETA_JOGO, (id, ))
-        self.__db.connection.commit()
+        self.__db.cursor().execute(SQL_DELETA_JOGO, (id, ))
+        self.__db.commit()
 
 
 class UsuarioDao:
