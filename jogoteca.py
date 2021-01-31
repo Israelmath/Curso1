@@ -25,9 +25,9 @@ usuarioDao = UsuarioDao(db)
 listJogos = jogoDao.listar()
 
 @app.route('/')
-def lista():
+def home():
+    listJogos = jogoDao.listar()
     if 'usuario_logado' not in session or session['usuario_logado'] is None:
-        print(f"lista: {url_for('login')}")
         return redirect(url_for('login'))
     return render_template('home.html', titulo='Jogos do Israel', jogos=listJogos)
 
@@ -55,11 +55,22 @@ def adicionaJogo():
 
     jogoDao.salvar(jogoNovo)
 
-    return redirect(url_for('lista'))
+    return redirect(url_for('home'))
 
 @app.route('/atualizar/', methods=['POST'])
 def atualizar():
-    pass
+    print(request.form)
+    id = request.form['id']
+    nome = request.form['nome']
+    categoria = request.form['categoria']
+    console = request.form['console']
+
+    jogoEditado = Jogo(nome, categoria, console, id=id)
+
+    jogoDao.salvar(jogoEditado)
+    print(jogoEditado)
+
+    return redirect(url_for('home'))
 
 @app.route('/login')
 def login():
@@ -91,4 +102,4 @@ def logout():
     flash('Nenhum usuário logado!')
     return redirect(url_for('login'))
 
-app.run('127.0.0.1', debug=True, port=2020)
+app.run('127.0.0.1', debug=True, port=2032)
