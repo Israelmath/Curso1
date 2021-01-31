@@ -3,10 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="5e205735-6df2-4efc-91fb-1e50cea63233" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/daos/dao.py" beforeDir="false" afterPath="$PROJECT_DIR$/daos/dao.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jogoteca.py" beforeDir="false" afterPath="$PROJECT_DIR$/jogoteca.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/editar.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/editar.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/home.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/novo.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/novo.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

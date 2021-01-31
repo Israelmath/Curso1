@@ -51,7 +51,9 @@ def adicionaJogo():
     categoria = request.form['categoria']
     console = request.form['console']
     jogoNovo = Jogo(nome, categoria, console)
-    # listJogos.append(jogoNovo)
+
+    arquivo = request.files['arquivo']
+    arquivo.save(f'upload/{arquivo.filename}')
 
     jogoDao.salvar(jogoNovo)
 
