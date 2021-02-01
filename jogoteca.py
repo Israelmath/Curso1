@@ -1,9 +1,11 @@
 import pymysql
-from flask import Flask, render_template, request, redirect, session, flash, url_for
+from flask import Flask, render_template, request, redirect, session, flash, url_for, send_from_directory
+from os import path
 
 from daos.dao import JogoDao, UsuarioDao
 from models.jogoModel import Jogo
 from models.usuarioModel import Usuario
+
 
 app = Flask(__name__)
 app.secret_key = 'Israel'
@@ -12,6 +14,7 @@ app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWD'] = '.,Avaiana41'
 app.config['MYSQL_HOST'] = '127.0.0.1'
 app.config['MYSQL_PORT'] = 3306
+app.config['UPLOADS_PATH'] = path.dirname(path.abspath(__file__)) + '/upload'
 
 db = pymysql.connect(user='root',
                      passwd='.,Avaiana41',
@@ -34,7 +37,6 @@ def home():
 @app.route('/novo')
 def novaTela():
     if 'usuario_logado' not in session or session['usuario_logado'] is None:
-        print(f"url_for('novaTela'): {url_for('novaTela')}")
         return redirect(url_for('login', proxima=url_for('novaTela')))
     return render_template('novo.html', titulo='Novo jogo')
 
@@ -43,7 +45,9 @@ def editar(id):
     if 'usuario_logado' not in session or session['usuario_logado'] is None:
         return redirect(url_for('login', proxima=url_for('editar')))
     jogo = jogoDao.busca_por_id(id)
-    return render_template('editar.html', titulo='Editar jogo', jogo=jogo)
+    jogoNome = f"capa{id}.jpg"
+
+    return render_template('editar.html', titulo='Editar jogo', jogo=jogo, nomeArquivo=jogoNome)
 
 @app.route('/criar', methods=['POST'])
 def adicionaJogo():
@@ -51,11 +55,14 @@ def adicionaJogo():
     categoria = request.form['categoria']
     console = request.form['console']
     jogoNovo = Jogo(nome, categoria, console)
+    jogo = jogoDao.salvar(jogoNovo)
+
 
     arquivo = request.files['arquivo']
-    arquivo.save(f'upload/{arquivo.filename}')
-
-    jogoDao.salvar(jogoNovo)
+    print(f'arquivo: {arquivo}')
+    uploadPath = app.config['UPLOADS_PATH']
+    if arquivo.filename != '':
+        arquivo.save(f'{uploadPath}/capa{jogo.id}.jpg')
 
     return redirect(url_for('home'))
 
@@ -109,5 +116,9 @@ def excluir(id):
     jogoDao.deletar(id)
 
     return redirect(url_for('home'))
+
+@app.route('/upload/<nome_arquivo>')
+def imgGenerics(nome_arquivo):
+    return send_from_directory('upload', nome_arquivo)
 
 app.run('127.0.0.1', debug=True, port=2032)
